@@ -1,5 +1,5 @@
 stacksize('max')
-cd C:\WorkZone\cbcg
+cd D:\WorkSpace\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 exec('gerschgorin.sci');
 exec('cbcg.sci');
@@ -62,7 +62,7 @@ filename="mesh2e1.mtx";
 //cbcg_kskip_main(filename,A,Min,Max,Size,b,Sample,10);
 //cbcg_kskip_main(filename,A,Min,Max,Size,b,Sample,20);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,1);
-cbcg_main(filename,A,Min,Max,Size,b,Sample,2);
+//cbcg_main(filename,A,Min,Max,Size,b,Sample,2);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,3);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,4);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,5);
