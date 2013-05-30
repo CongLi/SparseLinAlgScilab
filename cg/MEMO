@@ -1,0 +1,4 @@
+$ scilab -nw
+--> exec("cbcg.sci");
+
+"/home/skkk/ExperimentsRandom/Random": Random File in ulp-at52
