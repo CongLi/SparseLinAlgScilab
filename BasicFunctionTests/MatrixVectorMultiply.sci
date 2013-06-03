@@ -1,8 +1,9 @@
 //spmv test
 //#1
 stacksize('max')
-cd D:\WorkSpace\SparseLinAlgScilab\BasicFunctionTests
+//cd D:\WorkSpace\SparseLinAlgScilab\BasicFunctionTests
 // function 11 : mminfo.sci in other file
+cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\BasicFunctionTests
 exec("mminfo.sci")
 // funcition 12 : mmread in other file
 exec("mmread.sci")
@@ -13,6 +14,10 @@ filename="bcsstk26.mtx"
 
 [A,rows,cols,entries,rep,field,symm] = mmread(filename);
 A=full(A);
-x=ones(cols,1)
-Ax=A*x
-ip= Ax'* Ax
+//x=ones(cols,2);
+//x(:,2)=x(:,2)+1;
+x=ones(cols,1);
+b=x;
+Ax=A*x;
+r0=b-Ax;
+ip= r0'* r0
