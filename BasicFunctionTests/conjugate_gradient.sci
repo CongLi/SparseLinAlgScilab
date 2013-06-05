@@ -52,7 +52,10 @@ endfunction
 stacksize('max')
 //cd D:\WorkSpace\SparseLinAlgScilab\BasicFunctionTests
 // function 11 : mminfo.sci in other file
-cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\BasicFunctionTests
+//Windows 1
+//cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\BasicFunctionTests
+//ubuntu 1
+cd /home/scl/SparseLinAlgScilab-gh/BasicFunctionTests
 exec("mminfo.sci")
 // funcition 12 : mmread in other file
 exec("mmread.sci")
