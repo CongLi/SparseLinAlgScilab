@@ -1,5 +1,6 @@
 stacksize('max')
-cd D:\WorkSpace\SparseLinAlgScilab\cg
+//cd D:\WorkSpace\SparseLinAlgScilab\cg
+cd /home/sc2012/SparseLinAlgScilab-gh/cg
 exec('Matrix.sci');
 exec('gerschgorin.sci');
 exec('cbcg.sci');
@@ -10,6 +11,9 @@ b=rand(1000,Sample);
 //filename="TRI";
 //filename="bcsstm07.mtx";
 filename="mesh2e1.mtx";
+//filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
+//filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
+filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
 [A,Size]=Matrix(filename);
 [Min,Max]=gerschgorin(A, Size);
 //Min=0.0;
@@ -66,7 +70,7 @@ filename="mesh2e1.mtx";
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,3);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,4);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,5);
-//cbcg_main(filename,A,Min,Max,Size,b,Sample,6);
+cbcg_main(filename,A,Min,Max,Size,b,Sample,6);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,7);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,8);
 //cbcg_main(filename,A,Min,Max,Size,b,Sample,9);
