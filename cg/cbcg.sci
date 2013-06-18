@@ -116,7 +116,7 @@ exec('Matrix.sci');
 
 epsilon = 1e-20;
 max_iters = 100;
-s_k = 2;
+s_k = 10; //2, 4, 10
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
 //b=rand(5000,rhs_m * num_samples);
