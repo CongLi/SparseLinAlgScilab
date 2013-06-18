@@ -106,12 +106,12 @@ cd /home/scl/SparseLinAlgScilab-gh/cg
 exec('Matrix.sci');
 
 epsilon = 1e-20;
-max_iters = 100;
-rhs_m = 4;
+max_iters = 10;
+rhs_m = 1;
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
-b=rand(5000,rhs_m * num_samples);
-//b=zeros(5000,rhs_m * num_samples);
+//b=rand(5000,rhs_m * num_samples);
+b=zeros(5000,rhs_m * num_samples);
 
 //filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
 //filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
@@ -121,7 +121,7 @@ b=rand(5000,rhs_m * num_samples);
 //filename="/home/scl/MStore/SPD/sts4098.mtx";
 filename="/home/scl/MStore/SPD/crystm01.mtx";
 
-[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
-//[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
+//[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
+[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
 bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
