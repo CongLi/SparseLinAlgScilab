@@ -27,14 +27,14 @@ function P = MakeP(Diag, n)
 endfunction
 
 // function 14 : Matrix
-function [A,Size] = Matrix(filename)
+//function [A,rows,cols,entries,rep,field,symm] = mmread(filename)
+function [A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename)
     if filename=="TRI"
        A = MakeTri(2.0, 100)
        Size = 100
     else
-       [a0,a1,a2,a3,a4,a5,a6] = mmread(filename);
+       [a0,num_rows,num_cols,entries,a4,a5,a6] = mmread(filename);
        A = full(a0);
-       Size = a1;
     end
     [m,n] = size(A)
     d = diag(A)
@@ -44,3 +44,12 @@ function [A,Size] = Matrix(filename)
     end
 endfunction
 
+function [A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename)
+    if filename=="TRI"
+       A = MakeTri(2.0, 100)
+       Size = 100
+    else
+       [a0,num_rows,num_cols,entries,a4,a5,a6] = mmread(filename);
+       A = full(a0);
+    end
+endfunction
