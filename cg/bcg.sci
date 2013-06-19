@@ -1,8 +1,9 @@
 // block conjugate gradient method implementations
 //
-function [converge_label, max_difference] =  Converge_Checking (R , B , epsilon)
+function [converge_label, max_difference, min_difference] =  Converge_Checking (R , B , epsilon)
     converge_label = %t;
     max_difference = -%inf;
+    min_difference = %inf;
     
     assert_checktrue (size(R) == size(B));
     
@@ -18,14 +19,17 @@ function [converge_label, max_difference] =  Converge_Checking (R , B , epsilon)
             check_sign = norm_list_R(i) < (norm_list_B(i) * epsilon);
             if ~check_sign then
                 converge_label = %f;
-                if ( norm_list_R(i) / (norm_list_B(i)) - epsilon ) > max_difference then
-                    max_difference = norm_list_R(i) / (norm_list_B(i)) - epsilon;
+                if ( norm_list_R(i) / norm_list_B(i)) > max_difference then
+                    max_difference = norm_list_R(i) / norm_list_B(i);
+                end
+                if ( norm_list_R(i) / norm_list_B(i)) < min_difference then
+                    min_difference = norm_list_R(i) / norm_list_B(i);
                 end
             end
         end
     else
         r_norm = norm(R);
-        check_sign = r_norm < epsilon;
+        check_sign = r_norm / norm(B) < epsilon;
         if ~check_sign then
             converge_label = %f;
             max_difference = r_norm;
@@ -50,17 +54,20 @@ function [X, hist] = bcg(A, B, max_iters,epsilon)
 //    disp(Ptranspose_A_P_inverse);
     Rtranspose_R = R' * R;
 //    disp (Rtranspose_R);
-    
+    [converge_label , max_difference, min_difference] = Converge_Checking (R,B,epsilon);
+//        disp (max_difference);
+    hist(1,:) = [0,max_difference, min_difference];
+        
     for i=1:max_iters
         LAMBDA = Ptranspose_A_P_inverse * Rtranspose_R;
 //        disp (LAMBDA)
         X = X + P * LAMBDA;
         R = R - A_P * LAMBDA;
         
-        [converge_label , max_difference] = Converge_Checking (R,B,epsilon);
+        [converge_label , max_difference, min_difference] = Converge_Checking (R,B,epsilon);
 //        disp (max_difference);
-        hist(i,:) = [i,max_difference];
-        disp (hist(i,:));
+        hist(i+1,:) = [i,max_difference, min_difference];
+        disp (hist(i+1,:));
         if converge_label then
             disp ("converged ...........");
             break;
@@ -103,12 +110,13 @@ endfunction
 stacksize('max')
 //cd D:\WorkSpace\SparseLinAlgScilab\cg
 //cd /home/sc2012/SparseLinAlgScilab-gh/cg
-cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd /home/scl/SparseLinAlgScilab-gh/cg
+cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 
-epsilon = 1e-20;
+epsilon = 1e-15;
 max_iters = 150;
-rhs_m = 5;
+rhs_m = 3;
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
 b=rand(5000,rhs_m * num_samples);
@@ -120,9 +128,12 @@ b=rand(5000,rhs_m * num_samples);
 
 //filename="/home/scl/MStore/SPD/bcsstk26.mtx";
 //filename="/home/scl/MStore/SPD/sts4098.mtx";
-filename="/home/scl/MStore/SPD/crystm01.mtx";
+//filename="/home/scl/MStore/SPD/crystm01.mtx";
 
-//[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
-[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
+//
+filename="C:\MStore\SPD\crystm01.mtx";
+
+[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
+//[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
 bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);

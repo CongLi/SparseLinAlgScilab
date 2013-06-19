@@ -1,4 +1,47 @@
-function [x, hist] = cbcg_motoya(A, b, Min, Max, k, Size)
+function B = normalize(A)
+    [m, n] = size(A)
+    for i=1:n
+        d = norm(A(:,i))
+        B(:,i) = A(:,i) ./ d
+    end
+endfunction
+
+// 2013/01/09 cbcg version of motoya-san
+function [x, hist] = cbcg_motoya_1(A, b, Min, Max, k)
+    aa = 2/(Max-Min)
+    bb = -(Max+Min)/(Max-Min)
+    x = zeros(b)
+    r = b
+    hist(1,:) = [0,(r' * r)]
+    for i=1:1000
+        for j=1:k
+            if j == 1 then
+                S(:,1) = r
+            elseif j == 2 then
+                S(:,2) = aa * A * r + bb * r
+            else
+                S(:,j) = 2 * aa * A * S(:,j-1) + 2 * bb * S(:,j-1) - S(:,j-2)
+            end
+        end
+        S = normalize(S)
+        if i == 1 then
+            Q = S
+        else
+            B = lsq(Q' * A * Q, Q' * A * S, 1e-15)
+            Q = S - Q * B
+        end
+        Q = normalize(Q)
+        a = lsq(Q' * A * Q, Q' * r, 1e-15)
+        r = r - A * Q * a
+        x = x + Q * a
+        hist((i+1),:) = [i*k,(r' * r)]
+        if (norm(r) / norm(b) < 1e-10) then
+            break
+        end
+    end
+endfunction
+
+function [x, hist] = cbcg_motoya_2(A, b, Min, Max, k, Size)
     aa = 2/(Max-Min)
     bb = -(Max+Min)/(Max-Min)
     x = zeros(b)
@@ -36,6 +79,7 @@ endfunction
 // the inv function fail
 function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
     exec('gerschgorin.sci');
+    b_norm=norm(b);
     [num_row_A, num_col_A] = size(A);
     [eigenValue_min,eigenValue_max]=gerschgorin(A, num_row_A);
     s_alpha = 2.0 / (eigenValue_max - eigenValue_min);
@@ -79,13 +123,14 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
 //        disp (s_r_norm);
         hist((i+1),:) = [i*s_k,s_r_norm];
         disp(hist((i+1),:));
-//        if (norm(r) / norm(b) < 1e-10) then
-//            break
-//        end
-        if (s_r_norm < epsilon) then
+        if (s_r_norm / b_norm < epsilon) then
             disp ("converged ... ... ...");
             break;
         end
+//        if (s_r_norm < epsilon) then
+//            disp ("converged ... ... ...");
+//            break;
+//        end
     end
 endfunction
 
@@ -112,16 +157,17 @@ endfunction
 stacksize('max')
 //cd D:\WorkSpace\SparseLinAlgScilab\cg
 //cd /home/sc2012/SparseLinAlgScilab-gh/cg
-cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd /home/scl/SparseLinAlgScilab-gh/cg
+cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 
-epsilon = 1e-20;
+epsilon = 1e-15;
 max_iters = 150;
 s_k = 10; //2, 4, 10
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
-//b=rand(5000,rhs_m * num_samples);
-b=zeros(5000,num_samples);
+b=rand(5000, num_samples);
+//b=zeros(5000,num_samples);
 
 //filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
 //filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
@@ -130,10 +176,14 @@ b=zeros(5000,num_samples);
 
 //filename="/home/scl/MStore/SPD/bcsstk26.mtx";
 //filename="/home/scl/MStore/SPD/sts4098.mtx";
-filename="/home/scl/MStore/SPD/crystm01.mtx";
+//filename="/home/scl/MStore/SPD/crystm01.mtx";
 
-//[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
-[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
+//
+filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\ex9.mtx";
+
+[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
+//[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
 
 cbcg_main(filename, A, b, s_k, max_iters, epsilon);
