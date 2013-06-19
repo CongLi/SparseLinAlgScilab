@@ -75,9 +75,10 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
         r = r - A_Q * v_a;
         
         s_r_norm = norm(r);
-        disp("iteration",i);
-        disp (s_r_norm);
+//        disp("iteration",i);
+//        disp (s_r_norm);
         hist((i+1),:) = [i*s_k,s_r_norm];
+        disp(hist((i+1),:));
 //        if (norm(r) / norm(b) < 1e-10) then
 //            break
 //        end
@@ -110,12 +111,12 @@ endfunction
 
 stacksize('max')
 //cd D:\WorkSpace\SparseLinAlgScilab\cg
-cd /home/sc2012/SparseLinAlgScilab-gh/cg
-//cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd /home/sc2012/SparseLinAlgScilab-gh/cg
+cd /home/scl/SparseLinAlgScilab-gh/cg
 exec('Matrix.sci');
 
 epsilon = 1e-20;
-max_iters = 100;
+max_iters = 150;
 s_k = 10; //2, 4, 10
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
@@ -125,11 +126,11 @@ b=zeros(5000,num_samples);
 //filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
 //filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
 //filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
-filename="/home/sc2012/MStore/SPD/crystm01.mtx";
+//filename="/home/sc2012/MStore/SPD/crystm01.mtx";
 
 //filename="/home/scl/MStore/SPD/bcsstk26.mtx";
 //filename="/home/scl/MStore/SPD/sts4098.mtx";
-//filename="/home/scl/MStore/SPD/crystm01.mtx";
+filename="/home/scl/MStore/SPD/crystm01.mtx";
 
 //[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
 [A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed

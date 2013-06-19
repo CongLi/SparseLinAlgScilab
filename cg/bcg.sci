@@ -58,8 +58,9 @@ function [X, hist] = bcg(A, B, max_iters,epsilon)
         R = R - A_P * LAMBDA;
         
         [converge_label , max_difference] = Converge_Checking (R,B,epsilon);
-        disp (max_difference);
+//        disp (max_difference);
         hist(i,:) = [i,max_difference];
+        disp (hist(i,:));
         if converge_label then
             disp ("converged ...........");
             break;
@@ -106,12 +107,12 @@ cd /home/scl/SparseLinAlgScilab-gh/cg
 exec('Matrix.sci');
 
 epsilon = 1e-20;
-max_iters = 10;
-rhs_m = 1;
+max_iters = 150;
+rhs_m = 5;
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
-//b=rand(5000,rhs_m * num_samples);
-b=zeros(5000,rhs_m * num_samples);
+b=rand(5000,rhs_m * num_samples);
+//b=zeros(5000,rhs_m * num_samples);
 
 //filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
 //filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";

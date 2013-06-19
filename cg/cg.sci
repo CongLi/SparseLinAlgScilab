@@ -54,8 +54,8 @@ endfunction
 
 stacksize('max')
 //cd D:\WorkSpace\SparseLinAlgScilab\cg
-cd /home/sc2012/SparseLinAlgScilab-gh/cg
-//cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd /home/sc2012/SparseLinAlgScilab-gh/cg
+cd /home/scl/SparseLinAlgScilab-gh/cg
 exec('Matrix.sci');
 
 epsilon = 1e-20;
@@ -67,12 +67,12 @@ b=zeros(5000,num_samples);
 //filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
 //filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
 //filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
-filename="/home/sc2012/MStore/SPD/crystm01.mtx";
+//filename="/home/sc2012/MStore/SPD/crystm01.mtx";
 
 //filename="/home/scl/MStore/SPD/bcsstk26.mtx";
 //filename="/home/scl/MStore/SPD/sts4098.mtx";
 //filename="/home/scl/MStore/SPD/shallow_water2.mtx";
-//filename="/home/scl/MStore/SPD/crystm01.mtx";
+filename="/home/scl/MStore/SPD/crystm01.mtx";
 
 //[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
 [A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
