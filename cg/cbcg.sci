@@ -88,7 +88,7 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
     x = ones(b);
     r = b - A * x;
     
-    hist(1,:) = [0,(r' * r)];
+    hist(1,:) = [0,norm(r)/b_norm];
     disp ("iteration starts........");
     
     for i=1:max_iters
@@ -121,7 +121,7 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
         s_r_norm = norm(r);
 //        disp("iteration",i);
 //        disp (s_r_norm);
-        hist((i+1),:) = [i*s_k,s_r_norm];
+        hist((i+1),:) = [i*s_k, s_r_norm/b_norm];
         disp(hist((i+1),:));
         if (s_r_norm / b_norm < epsilon) then
             disp ("converged ... ... ...");
@@ -134,12 +134,12 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
     end
 endfunction
 
-function cbcg_main(filename, A, b, s_k, max_iters, epsilon)
+function [x,hist_cbcg]=cbcg_main(filename, A, b, s_k, max_iters, epsilon)
     [num_rows_b, num_cols_b] = size(b);
     [num_rows_A, num_cols_A] = size(A);
     num_samples = num_cols_b;
 
-    [x,hist]=cbcg_1(A, b(1:num_rows_A,1),s_k, max_iters, epsilon);
+    [x,hist_cbcg]=cbcg_1(A, b(1:num_rows_A,1),s_k, max_iters, epsilon);
     
 //    for i = 2:num_samples
 //        [x,tmp]=cbcg(A,A*b(1:Size,i),Min,Max,k, Size); 
@@ -162,8 +162,8 @@ cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 
 epsilon = 1e-15;
-max_iters = 150;
-s_k = 10; //2, 4, 10
+max_iters = 350;
+s_k = 20; //2, 4, 10
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
 b=rand(5000, num_samples);
@@ -179,12 +179,18 @@ b=rand(5000, num_samples);
 //filename="/home/scl/MStore/SPD/crystm01.mtx";
 
 //
-filename="C:\MStore\SPD\crystm01.mtx";
-//filename="C:\MStore\SPD\ex9.mtx";
+//filename="C:\MStore\SPD\crystm01.mtx";
+filename="C:\MStore\SPD\bcsstk16.mtx"
 
 [A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
 //[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
 
-cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg_k3]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg_k5]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg_k8]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg_k10]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//[x,hist_cbcg_k20]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+
 

@@ -5,7 +5,7 @@ function [x, hist] = cg(A, b, Size, max_iters,epsilon)
 //    b_norm = norm(b);
     p = r;
     rtranspose_r = (r' * r);
-    hist(1,:) = [0, sqrt(rtranspose_r)];
+    hist(1,:) = [0, sqrt(rtranspose_r)/b_norm];
     A_p = A * p;
     ptranspose_A_p = p' * A_p;
     ptranspose_A_p_inverse = inv(ptranspose_A_p);
@@ -18,7 +18,7 @@ function [x, hist] = cg(A, b, Size, max_iters,epsilon)
         rtranspose_r = r' * r ;
         r_norm = sqrt(rtranspose_r);
         
-        hist((i+1),:) = [i,r_norm];
+        hist((i+1),:) = [i,r_norm / b_norm];
         disp ( hist((i+1),:));
         
         if (r_norm / b_norm < epsilon) then
@@ -38,9 +38,9 @@ function [x, hist] = cg(A, b, Size, max_iters,epsilon)
     end
 endfunction
 
-function cg_main (filename, A, num_rows, b, num_samples, max_iters, epsilon)
+function [x,hist_cg]=cg_main (filename, A, num_rows, b, num_samples, max_iters, epsilon)
     
-    [x,hist]=cg(A,b(1:num_rows,1), num_rows, max_iters,epsilon);
+    [x,hist_cg]=cg(A,b(1:num_rows,1), num_rows, max_iters,epsilon);
 //    for i = 2:num_samples
 //        [x,tmp]=cg(A,b(1:num_rows,i), max_iters,epsilon);
 //	if hist($,1) < tmp($,1) then
@@ -62,7 +62,7 @@ cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 
 epsilon = 1e-15;
-max_iters = 150;
+max_iters = 350;
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
 //b=zeros(5000,num_samples);
@@ -78,15 +78,26 @@ b=rand(5000,num_samples);
 //filename="/home/scl/MStore/SPD/shallow_water2.mtx";
 //filename="/home/scl/MStore/SPD/crystm01.mtx";
 
-// zero divergence
+// divergence
 //filename="C:\MStore\SPD\msc01050.mtx";
 //filename="C:\MStore\SPD\bcsstk21.mtx";
-//
-filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\1138_bus.mtx";
+//filename="C:\MStore\SPD\nasa4704.mtx";
 //filename="C:\MStore\SPD\ex9.mtx";
+//
+//filename="C:\MStore\SPD\bcsstk15.mtx"; //convergence slow more 1000 iterations
+//filename="C:\MStore\SPD\1138_bus.mtx"; //convergence slow more 1000 iterations
+//filename="C:\MStore\SPD\sts4098.mtx";  //convergence slow around 700 iterations
+//
+//filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\mesh2e1.mtx";
+//filename="C:\MStore\SPD\bcsstm07.mtx";
+//filename="C:\MStore\SPD\Chem97ZtZ.mtx";
+filename="C:\MStore\SPD\bcsstk16.mtx"
 
 
 [A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
 //[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
-cg_main(filename, A, num_rows , b, num_samples, max_iters,epsilon);
+[x,hist_cg]=cg_main(filename, A, num_rows , b, num_samples, max_iters,epsilon);
+

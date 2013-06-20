@@ -32,7 +32,7 @@ function [converge_label, max_difference, min_difference] =  Converge_Checking (
         check_sign = r_norm / norm(B) < epsilon;
         if ~check_sign then
             converge_label = %f;
-            max_difference = r_norm;
+            max_difference = r_norm / norm(B);
         end
     end
 
@@ -90,10 +90,10 @@ function [X, hist] = bcg(A, B, max_iters,epsilon)
     end
 endfunction
 
-function bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon)
+function [x,hist_bcg]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon)
     [num_rows, num_cols] = size(A);
 //    disp (size(b(1:num_rows,1:rhs_m)));
-    [x,hist]=bcg( A , b(1:num_rows,1:rhs_m) , max_iters,epsilon);
+    [x,hist_bcg]=bcg( A , b(1:num_rows,1:rhs_m) , max_iters,epsilon);
     for i = 2:num_samples
         [x,tmp]=bcg( A , b(1:num_rows, ((i-1)*rhs_m + 1):(i* rhs_m)), max_iters,epsilon); 
 //      if hist($,1) < tmp($,1) then
@@ -115,8 +115,8 @@ cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
 exec('Matrix.sci');
 
 epsilon = 1e-15;
-max_iters = 150;
-rhs_m = 3;
+max_iters = 350;
+rhs_m = 20;
 num_samples = 1;
 //b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
 b=rand(5000,rhs_m * num_samples);
@@ -131,9 +131,16 @@ b=rand(5000,rhs_m * num_samples);
 //filename="/home/scl/MStore/SPD/crystm01.mtx";
 
 //
-filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\crystm01.mtx";
+filename="C:\MStore\SPD\bcsstk16.mtx"
 
 [A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
 //[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
 
-bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m1]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m3]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m5]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m8]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m10]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
+//[x,hist_bcg_m20]=bcg_main(filename, A, b, rhs_m, num_samples, max_iters,epsilon);
