@@ -88,7 +88,7 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
     x = ones(b);
     r = b - A * x;
     
-    hist(1,:) = [0,norm(r)/b_norm];
+    hist(1,:) = [0,norm(r)/b_norm,norm(r)/b_norm];
     disp ("iteration starts........");
     
     for i=1:max_iters
@@ -121,7 +121,9 @@ function [x, hist] = cbcg_1(A, b,s_k, max_iters, epsilon)
         s_r_norm = norm(r);
 //        disp("iteration",i);
 //        disp (s_r_norm);
-        hist((i+1),:) = [i*s_k, s_r_norm/b_norm];
+//        hist((i+1),:) = [i*s_k, s_r_norm/b_norm];
+        b_Ax_cbcg= b - A * x;
+        hist((i+1),:) = [i, s_r_norm/b_norm, norm(b_Ax_cbcg)/b_norm];
         disp(hist((i+1),:));
         if (s_r_norm / b_norm < epsilon) then
             disp ("converged ... ... ...");
@@ -154,43 +156,43 @@ function [x,hist_cbcg]=cbcg_main(filename, A, b, s_k, max_iters, epsilon)
 //    disp([k,hist($,1)])
 endfunction
 
-stacksize('max')
-//cd D:\WorkSpace\SparseLinAlgScilab\cg
-//cd /home/sc2012/SparseLinAlgScilab-gh/cg
-//cd /home/scl/SparseLinAlgScilab-gh/cg
-cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
-exec('Matrix.sci');
-
-epsilon = 1e-15;
-max_iters = 350;
-s_k = 20; //2, 4, 10
-num_samples = 1;
-//b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
-b=rand(5000, num_samples);
-//b=zeros(5000,num_samples);
-
-//filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
-//filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
-//filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
-//filename="/home/sc2012/MStore/SPD/crystm01.mtx";
-
-//filename="/home/scl/MStore/SPD/bcsstk26.mtx";
-//filename="/home/scl/MStore/SPD/sts4098.mtx";
-//filename="/home/scl/MStore/SPD/crystm01.mtx";
-
+//stacksize('max')
+////cd D:\WorkSpace\SparseLinAlgScilab\cg
+////cd /home/sc2012/SparseLinAlgScilab-gh/cg
+////cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
+//exec('Matrix.sci');
 //
-//filename="C:\MStore\SPD\crystm01.mtx";
-filename="C:\MStore\SPD\bcsstk16.mtx"
-
-[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
-//[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
-
-
-//[x,hist_cbcg]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
-//[x,hist_cbcg_k3]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
-//[x,hist_cbcg_k5]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
-//[x,hist_cbcg_k8]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
-//[x,hist_cbcg_k10]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
-//[x,hist_cbcg_k20]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+//epsilon = 1e-15;
+//max_iters = 350;
+//s_k = 20; //2, 4, 10
+//num_samples = 1;
+////b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
+//b=rand(5000, num_samples);
+////b=zeros(5000,num_samples);
+//
+////filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
+////filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
+////filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
+////filename="/home/sc2012/MStore/SPD/crystm01.mtx";
+//
+////filename="/home/scl/MStore/SPD/bcsstk26.mtx";
+////filename="/home/scl/MStore/SPD/sts4098.mtx";
+////filename="/home/scl/MStore/SPD/crystm01.mtx";
+//
+////
+////filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\bcsstk16.mtx"
+//
+//[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
+////[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
+//
+//
+////[x,hist_cbcg]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+////[x,hist_cbcg_k3]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+////[x,hist_cbcg_k5]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+////[x,hist_cbcg_k8]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+////[x,hist_cbcg_k10]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
+////[x,hist_cbcg_k20]=cbcg_main(filename, A, b, s_k, max_iters, epsilon);
 
 

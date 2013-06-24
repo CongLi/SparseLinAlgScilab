@@ -1,15 +1,18 @@
 // block chebyshev basis conjugate gradient method implementations
 //
-function [converge_label, max_difference, min_difference] =  Converge_Checking (R , B , epsilon)
+function [converge_label, max_difference_R, min_difference_R, max_difference_B_AX, min_difference_B_AX] =  Converge_Checking_BCBCG (R , B , B_AX, epsilon)
     converge_label = %t;
-    max_difference = -%inf;
-    min_difference = %inf;
+    max_difference_R = -%inf;
+    min_difference_R = %inf;
+    max_difference_B_AX = -%inf;
+    min_difference_B_AX = %inf;
     
     assert_checktrue (size(R) == size(B));
     
     [num_rows, num_cols] = size(R);
     assert_checktrue(num_cols>0);
 //    disp (num_cols);
+//    for max_difference_R, min_difference_R and convergence label
     if num_cols>1 then
         for i = 1: num_cols
             norm_list_R(i) = norm ( R(:,i) );
@@ -19,20 +22,46 @@ function [converge_label, max_difference, min_difference] =  Converge_Checking (
             check_sign = norm_list_R(i) < (norm_list_B(i) * epsilon);
             if ~check_sign then
                 converge_label = %f;
-                if ( norm_list_R(i) / norm_list_B(i)) > max_difference then
-                    max_difference = norm_list_R(i) / norm_list_B(i);
+                if ( norm_list_R(i) / norm_list_B(i)) > max_difference_R then
+                    max_difference_R = norm_list_R(i) / norm_list_B(i);
                 end
-                if ( norm_list_R(i) / norm_list_B(i)) < min_difference then
-                    min_difference = norm_list_R(i) / norm_list_B(i);
+                if ( norm_list_R(i) / norm_list_B(i)) < min_difference_R then
+                    min_difference_R = norm_list_R(i) / norm_list_B(i);
                 end
             end
         end
     else
-        r_norm = norm(R);
-        check_sign = r_norm / norm(B) < epsilon;
+        r_norm_R = norm(R);
+        check_sign = r_norm_R / norm(B) < epsilon;
         if ~check_sign then
             converge_label = %f;
-            max_difference = r_norm / norm(B);
+            max_difference_R = r_norm_R / norm(B);
+        end
+    end
+    // for max_difference_B_AX, min_difference_B_AX
+    if num_cols>1 then
+        for i = 1: num_cols
+            norm_list_B_AX(i) = norm ( B_AX(:,i) );
+//          disp (norm_list_R(i));
+            norm_list_B(i) = norm ( B(:,i) );
+//          disp (norm_list_B(i));
+//            check_sign = norm_list_R(i) < (norm_list_B(i) * epsilon);
+            if %t then
+//                converge_label = %f;
+                if ( norm_list_B_AX(i) / norm_list_B(i)) > max_difference_B_AX then
+                    max_difference_B_AX = norm_list_B_AX(i) / norm_list_B(i);
+                end
+                if ( norm_list_B_AX(i) / norm_list_B(i)) < min_difference_B_AX then
+                    min_difference_B_AX = norm_list_B_AX(i) / norm_list_B(i);
+                end
+            end
+        end
+    else
+        r_B_AX_norm = norm(B_AX);
+//        check_sign = r_norm / norm(B) < epsilon;
+        if %t then
+//            converge_label = %f;
+            max_difference_B_AX = r_B_AX_norm / norm(B);
         end
     end
 
@@ -50,8 +79,8 @@ function [X, hist] = bcbcg(A, B, rhs_m, s_k, max_iters,epsilon)
     R = B - A * X;
     S = ones(num_row_A, s_k * rhs_m);
 
-    [converge_label , max_difference, min_difference] = Converge_Checking (R,B,epsilon);
-    hist(1,:) = [0, max_difference, min_difference];
+    [converge_label, max_difference_R, min_difference_R, max_difference_B_AX, min_difference_B_AX] = Converge_Checking_BCBCG (R,B,R,epsilon);
+    hist(1,:) = [0, max_difference_R, min_difference_R, max_difference_B_AX, min_difference_B_AX];
     
     disp ("iteration starts ... ... ... ...");
     for i=1:max_iters
@@ -85,9 +114,10 @@ function [X, hist] = bcbcg(A, B, rhs_m, s_k, max_iters,epsilon)
         // 
         X = X + Q * LAMBDA; 
         R = R - A_Q * LAMBDA;
-        
-        [converge_label , max_difference, min_difference] = Converge_Checking (R,B,epsilon);
-        hist(i+1,:) = [i*s_k,max_difference, min_difference];
+        B_AX_BCBCG= B - A * X;
+        [converge_label, max_difference_R, min_difference_R, max_difference_B_AX, min_difference_B_AX] = Converge_Checking_BCBCG (R,B,B_AX_BCBCG,epsilon);
+//        hist(i+1,:) = [i*s_k,max_difference, min_difference];
+        hist(i+1,:) = [i, max_difference_R, min_difference_R, max_difference_B_AX, min_difference_B_AX];
         disp (hist(i+1,:));
         if converge_label then
             disp ("converged ...........");
@@ -113,42 +143,42 @@ function [x,hist_bcbcg]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_
 //    disp([k,hist($,1)])
 endfunction
 
-stacksize('max')
-//cd D:\WorkSpace\SparseLinAlgScilab\cg
-//cd /home/sc2012/SparseLinAlgScilab-gh/cg
-//cd /home/scl/SparseLinAlgScilab-gh/cg
-cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
-exec('Matrix.sci');
-
-epsilon = 1e-15;
-max_iters = 350;
-rhs_m = 3;
-s_k =20;
-num_samples = 1;
-//b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
-b=rand(5000,rhs_m * num_samples);
-//b=zeros(5000,rhs_m * num_samples);
-
-//filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
-//filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
-//filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
-//filename="/home/sc2012/MStore/SPD/crystm01.mtx";
-
-//filename="/home/scl/MStore/SPD/bcsstk26.mtx";
-//filename="/home/scl/MStore/SPD/sts4098.mtx";
-//filename="/home/scl/MStore/SPD/crystm01.mtx";
-
+//stacksize('max')
+////cd D:\WorkSpace\SparseLinAlgScilab\cg
+////cd /home/sc2012/SparseLinAlgScilab-gh/cg
+////cd /home/scl/SparseLinAlgScilab-gh/cg
+//cd C:\Users\sc2012\Documents\GitHub\SparseLinAlgScilab\cg
+//exec('Matrix.sci');
 //
-//filename="C:\MStore\SPD\crystm01.mtx";
-filename="C:\MStore\SPD\bcsstk16.mtx"
-
-[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
-//[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
-
-//[x,hist_bcbcg_m3k1]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-//[x,hist_bcbcg_m3k3]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-//[x,hist_bcbcg_m3k5]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-//[x,hist_bcbcg_m3k8]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-//[x,hist_bcbcg_m3k10]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-//[x,hist_bcbcg_m3k20]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
-
+//epsilon = 1e-15;
+//max_iters = 350;
+//rhs_m = 3;
+//s_k =20;
+//num_samples = 1;
+////b=fscanfMat("/home/skkk/ExperimentsRandom/Random");
+//b=rand(5000,rhs_m * num_samples);
+////b=zeros(5000,rhs_m * num_samples);
+//
+////filename="/home/sc2012/MStore/SPD/bcsstk26.mtx";
+////filename="/home/sc2012/MStore/SPD/shallow_water2.mtx";
+////filename="/home/sc2012/MStore/SPD/nasasrb.mtx";
+////filename="/home/sc2012/MStore/SPD/crystm01.mtx";
+//
+////filename="/home/scl/MStore/SPD/bcsstk26.mtx";
+////filename="/home/scl/MStore/SPD/sts4098.mtx";
+////filename="/home/scl/MStore/SPD/crystm01.mtx";
+//
+////
+////filename="C:\MStore\SPD\crystm01.mtx";
+//filename="C:\MStore\SPD\bcsstk16.mtx"
+//
+//[A,num_rows,num_cols,entries] = Matrix_precondtioned_1(filename); // the returned matrix is preconditioed
+////[A,num_rows,num_cols,entries] = Matrix_nonprecondtioned(filename); // the returned matrix is nonpreconditioed
+//
+////[x,hist_bcbcg_m3k1]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+////[x,hist_bcbcg_m3k3]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+////[x,hist_bcbcg_m3k5]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+////[x,hist_bcbcg_m3k8]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+////[x,hist_bcbcg_m3k10]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+////[x,hist_bcbcg_m3k20]=bcbcg_main(filename, A, b, rhs_m, s_k, num_samples, max_iters,epsilon);
+//
